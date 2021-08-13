@@ -11,7 +11,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.contains;
 
 // 3- Classe
 public class Pet {
@@ -44,6 +46,8 @@ public class Pet {
                 .statusCode(200)
                 .body("name", is("Messi")) // Checa se o nome do cachorro é Snoopy.
                 .body("status", is("available"))
+                .body("category.name", is("dog"))
+                .body("tags.name", contains("sta"))
         ;
     }
 
