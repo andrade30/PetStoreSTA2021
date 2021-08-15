@@ -3,6 +3,9 @@ package petstore;
 
 // 2- Bibliotecas
 
+import io.restassured.config.EncoderConfig;
+import io.restassured.config.RestAssuredConfig;
+import io.restassured.http.ContentType;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -39,9 +42,9 @@ public class Pet {
                 .contentType("application/json") // comum em API REST - antigas era "text/xml"
                 .log().all()
                 .body(jsonBody)
-        .when() // Quando
+                .when() // Quando
                 .post(uri)
-        .then() // Então
+                .then() // Então
                 .log().all()
                 .statusCode(200)
                 .body("name", is("Messi")) // Checa se o nome do cachorro é Snoopy.
@@ -52,26 +55,43 @@ public class Pet {
     }
 
     @Test(priority = 2)
-    public void consultarPet(){
-        String petId = "1974080125";
+    public void consultarPet() {
+        String petId = "1974080152";
 
         String token =
-        given()
-                .contentType("application/jason")
-                .log().all()
-        .when()
-                .get(uri + "/" + petId)
-        .then()
-                .log().all()
-                .statusCode(200)
-                .body("name", is("Messi"))
-                .body("category.name", is("AX2345LORD"))
-                .body("status", is("available"))
-        .extract()
-                .path("category.name")
-        ;
+                given()
+                        .contentType("application/jason")
+                        .log().all()
+                        .when()
+                        .get(uri + "/" + petId)
+                        .then()
+                        .log().all()
+                        .statusCode(200)
+                        .body("name", is("Messi"))
+                        .body("category.name", is("AX2345LORD"))
+                        .body("status", is("available"))
+                        .extract()
+                        .path("category.name");
         System.out.println("O token é " + token);
 
     }
 
+    @Test(priority = 3)
+    public void alterarPet() throws IOException {
+        String jsonBody = lerJson("db/pet2.json");
+
+        given()
+                .contentType("application/jason")
+                .log().all()
+                .body(jsonBody)
+        .when()
+                .put(uri)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("name", is("Messi"))
+                .body("status", is("sold"))
+
+        ;
+    }
 }
